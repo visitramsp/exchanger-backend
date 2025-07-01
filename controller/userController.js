@@ -154,58 +154,87 @@ const userLogout = async (req, res) => {
 
 const userList = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 8;
-
-    let query = {};
-    if (req.query.search) {
-      const searchRegex = new RegExp(req.query.search, "i");
-      query = {
-        $or: [
-          { name: { $regex: searchRegex } },
-          { email: { $regex: searchRegex } },
-          { state: { $regex: searchRegex } },
-          { city: { $regex: searchRegex } },
-          { distric: { $regex: searchRegex } },
-          { mobile_no: { $regex: searchRegex } },
-        ],
-      };
-    }
-    const usersList = await uerRegistrationModel
-      .find(query)
-      .sort({ _id: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .exec();
-    if (req.query.search?.length > 0 && usersList?.length === 0) {
-      return res.status(200).json({
-        data: [],
-        message: "Not Found",
-        status_code: 200,
+    if (!req.user._id) {
+      return res.status(500).json({
+        data: usersList,
+        message: `user email ${req.user.email} not found`,
+        status_code: 500,
       });
     }
-
-    const totalUsers = await uerRegistrationModel.countDocuments(query);
-    const totalPages = Math.ceil(totalUsers / limit);
-
+    const usersList = await uerRegistrationModel.find({ _id: req.user._id })
     return res.status(200).json({
-      data: usersList,
+      data: usersList?.[0],
       message: "user fetched successfully.",
       status_code: 200,
-      totalPages,
-      currentPage: page,
-      count: usersList.length
     });
   } catch (err) {
     return res.status(500).json({
       status_code: 500,
       status: false,
-      message: "Internal server error",
+      message: err.message,
     });
   }
 };
 
 
+
+
+
+// const userList = async (req, res, next) => {
+//   try {
+
+//     console.log(req.user._id, "req.user" );
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 8;
+
+//     let query = {};
+//     if (req.query.search) {
+//       const searchRegex = new RegExp(req.query.search, "i");
+//       query = {
+//         $or: [
+//           { name: { $regex: searchRegex } },
+//           { email: { $regex: searchRegex } },
+//           { state: { $regex: searchRegex } },
+//           { city: { $regex: searchRegex } },
+//           { distric: { $regex: searchRegex } },
+//           { mobile_no: { $regex: searchRegex } },
+//         ],
+//       };
+//     }
+//     const usersList = await uerRegistrationModel
+//       .find(query)
+//       .sort({ _id: -1 })
+//       .skip((page - 1) * limit)
+//       .limit(limit)
+//       .exec();
+//     if (req.query.search?.length > 0 && usersList?.length === 0) {
+//       return res.status(200).json({
+//         data: [],
+//         message: "Not Found",
+//         status_code: 200,
+//       });
+//     }
+
+//     const totalUsers = await uerRegistrationModel.countDocuments(query);
+//     const totalPages = Math.ceil(totalUsers / limit);
+
+//     return res.status(200).json({
+//       data: usersList,
+//       message: "user fetched successfully.",
+//       status_code: 200,
+//       totalPages,
+//       currentPage: page,
+//       count: usersList.length
+//     });
+//   } catch (err) {
+//     return res.status(500).json({
+//       status_code: 500,
+//       status: false,
+//       message: "Internal server error",
+//     });
+//   }
+// };
 
 // const sendMail = async (req, res) => {
 //   const email = req.body.email;
@@ -289,6 +318,9 @@ const userList = async (req, res, next) => {
 //     });
 //   }
 // };
+
+
+
 const userDelete = async (req, res) => {
   try {
     const _id = req.params;

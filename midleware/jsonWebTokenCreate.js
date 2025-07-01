@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { uerRegistrationModel } = require("../Model/UserSchema");
 require("dotenv").config();
 const secretKey = process.env.SECRET_KEY;
 
@@ -35,7 +36,7 @@ const jwtAuthMiddleware = (req, res, next) => {
 
 
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res
@@ -43,9 +44,13 @@ const verifyToken = (req, res, next) => {
       .json({ status: false, message: "Unauthorized: No token provided" });
   }
   const token = authHeader.split(" ")[1];
+
   try {
     const decoded = jwt.verify(token, secretKey);
-    console.log(decoded, "authHeader");
+    const user = await uerRegistrationModel.findOne({ email: decoded.email });
+    if (!user || !user.is_login) {
+      return res.status(401).json({ status: false, message: "Invalid or expired token" });
+    }
     req.user = decoded;
     next();
   } catch (err) {

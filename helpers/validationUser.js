@@ -26,9 +26,6 @@ export const userRegister = Joi.object({
     .label("Phone Number"),
   country: Joi.string().trim().required("Selecting Country Code is Required"),
 })
-
-// For Indian mobile numbers like 9876543210
-
 export const userRegistrationValidation = Joi.object({
   name: Joi.string()
     .min(3)
@@ -68,13 +65,13 @@ export const userRegistrationValidation = Joi.object({
   city: Joi.string()
     .trim()
     .min(2),
-    // .label("City"),
+  // .label("City"),
 
   distric: Joi.string()
     .trim()
     .min(2)
     .required(),
-    // .label('distric'),
+  // .label('distric'),
   current_location: Joi.string()
     .trim()
     .min(2)
@@ -92,8 +89,6 @@ export const userRegistrationValidation = Joi.object({
     })
     .label("Pincode")
 });
-
-
 export const otpVerificationSchema = Joi.object({
   email: Joi.string()
     .trim()
@@ -113,4 +108,22 @@ export const otpVerificationSchema = Joi.object({
       'any.required': 'OTP is required',
       'number.empty': 'OTP cannot be empty'
     })
+});
+
+
+export const documentValidation = Joi.object({
+  document_type: Joi.string().valid('pan_card', 'aadhaar', 'passport').required(),
+})
+
+
+export const addNomineeSchema = Joi.object({
+  fullName: Joi.string().required(),
+  relationship: Joi.string().required(),
+  dob: Joi.date().required(),
+  gender: Joi.string().valid('male', 'female', 'other').required(),
+  mobile: Joi.string().pattern(/^[0-9]{10,15}$/).required(),
+  email: Joi.string().email().required(),
+  address: Joi.string().required(),
+  idProofType: Joi.string().optional(),
+  idProofNumber: Joi.string().optional()
 });

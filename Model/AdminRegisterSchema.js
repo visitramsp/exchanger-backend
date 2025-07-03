@@ -13,9 +13,9 @@ const adminRegisterSchema = new mongoose.Schema({
   },
   isLogin: {
     type: Boolean,
-    default: false, 
+    default: false,
   },
 });
 
 const adminRegisters = mongoose.model("Admin", adminRegisterSchema);
-module.exports = { adminRegisters };
+module.exports = { adminRegisters } 

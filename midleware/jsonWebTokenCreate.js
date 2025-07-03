@@ -47,6 +47,8 @@ const verifyToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, secretKey);
+    console.log(decoded,"decoded");
+    
     const user = await uerRegistrationModel.findOne({ email: decoded.email });
     if (!user || !user.is_login) {
       return res.status(401).json({ status: false, message: "Invalid or expired token" });

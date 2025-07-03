@@ -2,8 +2,6 @@
 const validate = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body);
-
-
     if (error) {
       const rawMessage = error.details[0].message;
       const cleanedMessage = rawMessage.replace(/"/g, '');

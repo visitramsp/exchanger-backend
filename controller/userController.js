@@ -290,24 +290,24 @@ const addNominee = async (req, res) => {
 
 
     if (existingNominee) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
-        status_code: 400,
+        status_code: 200,
         message: "Nominee with this full name already exists"
       });
     }
     if (existingNominee?.email === email) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
-        status_code: 400,
+        status_code: 200,
         message: "Nominee with this email already exists"
       });
 
     }
     if (existingNominee?.mobile === mobile) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
-        status_code: 400,
+        status_code: 200,
         message: "Nominee with this email already exists"
       });
 
